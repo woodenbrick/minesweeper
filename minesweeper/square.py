@@ -177,6 +177,10 @@ class Grid(object):
 
     
     def end_game(self):
+        #show all squares
+        #stop timer
+        #change to dead face
+        #show incorrect mine guesses
         print "game over"
 
 
