@@ -53,6 +53,8 @@ class Square(gtk.EventBox):
         """Count surrounding mines and uncover or end game if mine"""
         if self.button_depressed:
             self.uncover()
+            if not self.grid.game_started:
+                self.grid.emit("start-game")
             
     def uncover(self):
         self.is_covered = False
@@ -83,6 +85,8 @@ class Grid(object):
         self.rows = rows
         self.cols = cols
         self.mines = mines
+        self.game_started = False
+        ##gtk. #XXXcreate signal emitter for game start
         
     
     def create_minefield(self):

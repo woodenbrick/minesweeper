@@ -13,8 +13,7 @@ class MineSweeperGame(object):
             pass
         if len(args) != 3:
             args = [10, 10, 20]
-        self.grid = Grid(*args)
-        self.table = self.grid.create_minefield()
+
         self.window = gtk.Window()
         self.vbox = gtk.VBox()
         self.window.add(self.vbox)
@@ -30,12 +29,22 @@ class MineSweeperGame(object):
         self.hbox.pack_start(self.smiley_button)
         self.hbox.pack_start(self.mine_counter)
         self.vbox.pack_start(self.hbox)
-        self.vbox.pack_start(self.table)
-        self.table.connect("clicked", self.start_game)
+        self.pack_mines(*args)
+        self.smiley_button.connect("clicked", self.pack_mines, self.grid.rows, self.grid.cols, self.grid.mines)
         self.window.connect("destroy", self.main_quit)
         self.window.show_all()
         self.set_labels()
         gtk.main()
+        
+    def pack_mines(self, *args):
+        try:
+            self.vbox.remove(self.table)
+        except AttributeError:
+            pass
+        #args sometimes contains a button widget so we only pass the last 3 args
+        self.grid = Grid(*args[-3:])
+        self.table = self.grid.create_minefield()
+        self.vbox.pack_start(self.table)
         
     def start_game(self):
         self.timer = gobject.timeout_add(1000, self.increment_time)
