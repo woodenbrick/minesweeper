@@ -34,7 +34,6 @@ class Square(gtk.EventBox):
         self.button_depressed = False
         self.is_covered = True
         self.current_flag_state = 0 # 1 for flag 2 for question mark
-        print self.surrounding_mines
     
     def on_mouse_in(self, widget, event):
         if event.button == Square.LEFT_CLICK or event.button == Square.BOTH_CLICK:
