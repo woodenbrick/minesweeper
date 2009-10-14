@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Komodo Project File - DO NOT EDIT -->
+<project id="4bb1541a-4aef-4ba5-91c2-887c1bb6d576" kpf_version="4" name="minesweeper.kpf">
+<preference-set idref="4bb1541a-4aef-4ba5-91c2-887c1bb6d576">
+  <boolean id="import_live">1</boolean>
+</preference-set>
+</project>
