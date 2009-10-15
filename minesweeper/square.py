@@ -53,9 +53,9 @@ class Square(gtk.EventBox):
     def on_mouse_released(self, widget, event):
         """Count surrounding mines and uncover or end game if mine"""
         if self.button_depressed:
-            self.uncover_square()
+            self.uncover()
             
-    def uncover_square(self):
+    def uncover(self):
         self.is_covered = False
         self.disconnect_by_func(self.on_mouse_in)
         self.disconnect_by_func(self.on_mouse_out)
@@ -159,7 +159,7 @@ class Grid(object):
         next_batch = []
         for square in surrounding:
             if square.is_covered and square.surrounding_mines == 0 and not square.is_mine and square.current_flag_state !=1:
-                    square.uncover_square()
+                    square.uncover()
                     next_batch.append([square.row, square.col])
         for i, j in next_batch:
             self.uncover_squares(i, j)
@@ -173,7 +173,7 @@ class Grid(object):
                     surrounding = self.return_surrounding_squares(square.row, square.col)
                     for item in surrounding:
                         if item.is_covered and not item.is_mine:
-                            item.uncover_square()
+                            item.uncover()
 
     
     def end_game(self):
