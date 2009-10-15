@@ -83,15 +83,11 @@ class Grid(object):
         assert mines < rows*cols
         self.rows = rows
         self.cols = cols
-        self.table = self.create_minefield(mines)
-        self.window = gtk.Window()
-        self.window.add(self.table)
-        self.window.connect("destroy", self.main_quit)
-        self.window.show()
+        self.mines = mines
         
     
-    def create_minefield(self, mines):
-        temp_mines = [True] * mines + [False] * (self.rows*self.cols-mines)
+    def create_minefield(self):
+        temp_mines = [True] * self.mines + [False] * (self.rows*self.cols-self.mines)
         random.shuffle(temp_mines)
         index = 0
         minelist = []
@@ -183,8 +179,7 @@ class Grid(object):
     def end_game(self):
         print "game over"
 
-    def main_quit(self, *args):
-        gtk.main_quit()
+
         
 
     
