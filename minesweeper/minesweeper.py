@@ -13,8 +13,16 @@ class MineSweeperGame(object):
             pass
         if len(args) != 3:
             args = [10, 10, 20]
-        Grid(*args)
+        grid = Grid(*args)
+        table = grid.create_minefield()
+        self.window = gtk.Window()
+        self.window.add(table)
+        self.window.connect("destroy", self.main_quit)
+        self.window.show()
         gtk.main()
+    
+    def main_quit(self, *args):
+        gtk.main_quit()
 
 
 if __name__ == "__main__":
