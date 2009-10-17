@@ -1,4 +1,9 @@
 #!/usr/bin/env python
+import gobject
+import gtk
+import random
+import time
+from square import Square
 
 class Grid(gobject.GObject):
     __gsignals__ = {

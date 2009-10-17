@@ -5,7 +5,7 @@ import time
 import gobject
 pygtk.require("2.0")
 
-from square import Grid
+from grid import Grid
 
 class MineSweeperGame(object):
     def __init__(self, *args):
