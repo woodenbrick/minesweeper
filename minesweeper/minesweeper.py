@@ -48,6 +48,7 @@ class MineSweeperGame(object):
         self.grid.connect("start-game", self.start_game)
         self.grid.connect("add-flag", self.flagging)
         self.grid.connect("remove-flag", self.flagging)
+        self.grid.connect("end-game", self.end_game)
         self.table = self.grid.create_minefield()
         self.vbox.pack_start(self.table)
         
@@ -58,6 +59,16 @@ class MineSweeperGame(object):
             pass
         self.start_time = time.time()
         self.timer = gobject.timeout_add(1000, self.increment_time)
+    
+    def end_game(self, *args):
+        #if this is called and and square that has a mine is not flagged, it is a loss
+        
+        #show all squares
+        #stop timer
+        #change to dead face
+        #show incorrect mine guesses
+        print "game over"
+
         
     def flagging(self, grid, value):
         mines_flagged = int(self.mine_counter.get_text()) + value
