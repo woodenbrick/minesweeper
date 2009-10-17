@@ -65,7 +65,7 @@ class Square(gtk.EventBox):
         self.disconnect_by_func(self.on_mouse_released)
         if self.is_mine:
             self.image.set_from_pixbuf(Square.mine_pixbuf)
-            self.grid.end_game()
+            self.grid.emit("end-game")
         else:
             self.image.set_from_pixbuf(Square.numbers_pixbuf[self.surrounding_mines])
             self.grid.uncover_squares(self.row, self.col)
@@ -76,10 +76,10 @@ class Square(gtk.EventBox):
         """Alternates between flagging, questionmark and a blank cover for square"""
         if self.current_flag_state == 0:
             self.current_flag_state = 1
-            self.grid.emit("add-flag")
+            self.grid.emit("add-flag", -1)
         elif self.current_flag_state == 1:
             self.current_flag_state = 2
-            self.grid.emit("remove-flag")
+            self.grid.emit("remove-flag", 1)
         else:
             self.current_flag_state = 0
         self.image.set_from_pixbuf(Square.flag_states[self.current_flag_state])
@@ -87,8 +87,9 @@ class Square(gtk.EventBox):
 class Grid(gobject.GObject):
     __gsignals__ = {
         "start-game": (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, ()),
-        "remove-flag" : (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, ()),
-        "add-flag" : (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, ())
+        "remove-flag" : (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, (int)),
+        "add-flag" : (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, (int)),
+        "end-game" : (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, ()),    
     }
 
     def __init__(self, rows=10, cols=10, mines=30):

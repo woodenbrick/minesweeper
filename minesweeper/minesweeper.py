@@ -46,8 +46,8 @@ class MineSweeperGame(object):
         #args sometimes contains a button widget so we only pass the last 3 args
         self.grid = Grid(*args[-3:])
         self.grid.connect("start-game", self.start_game)
-        self.grid.connect("add-flag", self.flagging, -1)
-        self.grid.connect("remove-flag", self.flagging, 1)
+        self.grid.connect("add-flag", self.flagging)
+        self.grid.connect("remove-flag", self.flagging)
         self.table = self.grid.create_minefield()
         self.vbox.pack_start(self.table)
         
