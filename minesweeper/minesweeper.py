@@ -1,6 +1,8 @@
 import sys
 import gtk
 import pygtk
+import time
+import gobject
 pygtk.require("2.0")
 
 from square import Grid
@@ -43,14 +45,26 @@ class MineSweeperGame(object):
             pass
         #args sometimes contains a button widget so we only pass the last 3 args
         self.grid = Grid(*args[-3:])
+        self.grid.connect("start-game", self.start_game)
+        self.grid.connect("add-flag", self.flagging, -1)
+        self.grid.connect("remove-flag", self.flagging, 1)
         self.table = self.grid.create_minefield()
         self.vbox.pack_start(self.table)
         
-    def start_game(self):
+    def start_game(self, *args):
+        try:
+            gobject.source_remove(self.time)
+        except:
+            pass
+        self.start_time = time.time()
         self.timer = gobject.timeout_add(1000, self.increment_time)
         
+    def flagging(self, grid, value):
+        mines_flagged = int(self.mine_counter.get_text()) + value
+        self.mine_counter.set_text(str(mines_flagged))
+        
     def increment_time(self):
-        self.timer_label.set_text(str(int(self.timer_label.get_text()) + 1))
+        self.timer_label.set_text(str(int(time.time() - self.start_time)))
         return True
     
     def set_labels(self):

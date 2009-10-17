@@ -1,6 +1,7 @@
 import gtk
 import random
 import time
+import gobject
 
 class Square(gtk.EventBox):
     SHARE_DIR = ""
@@ -55,6 +56,7 @@ class Square(gtk.EventBox):
             self.uncover()
             if not self.grid.game_started:
                 self.grid.emit("start-game")
+                self.grid.game_started = True
             
     def uncover(self):
         self.is_covered = False
@@ -72,21 +74,30 @@ class Square(gtk.EventBox):
             
     def flag(self):
         """Alternates between flagging, questionmark and a blank cover for square"""
-        if self.current_flag_state == 2:
-            self.current_flag_state = 0
+        if self.current_flag_state == 0:
+            self.current_flag_state = 1
+            self.grid.emit("add-flag")
+        elif self.current_flag_state == 1:
+            self.current_flag_state = 2
+            self.grid.emit("remove-flag")
         else:
-            self.current_flag_state += 1
-        print self.current_flag_state
+            self.current_flag_state = 0
         self.image.set_from_pixbuf(Square.flag_states[self.current_flag_state])
 
-class Grid(object):
+class Grid(gobject.GObject):
+    __gsignals__ = {
+        "start-game": (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, ()),
+        "remove-flag" : (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, ()),
+        "add-flag" : (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, ())
+    }
+
     def __init__(self, rows=10, cols=10, mines=30):
+        gobject.GObject.__init__(self)
         assert mines < rows*cols
         self.rows = rows
         self.cols = cols
         self.mines = mines
         self.game_started = False
-        ##gtk. #XXXcreate signal emitter for game start
         
     
     def create_minefield(self):
