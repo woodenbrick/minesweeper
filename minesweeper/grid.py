@@ -20,6 +20,7 @@ class Grid(gobject.GObject):
         self.cols = cols
         self.mines = mines
         self.game_started = False
+        self.game_over = False
         
     
     def create_minefield(self):

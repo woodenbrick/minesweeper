@@ -62,7 +62,22 @@ class MineSweeperGame(object):
     
     def end_game(self, *args):
         #if this is called and and square that has a mine is not flagged, it is a loss
-        
+        self.grid.disconnect_by_func(self.end_game)
+        self.grid.game_over = True
+        victory = True if self.mine_counter.get_text() == "0" else False
+        for row in self.grid.minelist:
+            for square in row:
+                if square.is_covered:
+                    square.uncover()
+                    if square.current_flag_state == 1 and not square.is_mine:
+                        square.set_incorrect_flag()
+                        victory = False
+        if victory:
+            print 'You win'
+        else:
+            print 'You lose'
+
+                
         #show all squares
         #stop timer
         #change to dead face

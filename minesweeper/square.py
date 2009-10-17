@@ -13,6 +13,8 @@ class Square(gtk.EventBox):
     flag = gtk.gdk.pixbuf_new_from_file(SHARE_DIR + "images/flag.png")
     question = gtk.gdk.pixbuf_new_from_file(SHARE_DIR +"images/question.png")
     flag_states = [button, flag, question]
+    incorrect_flag = gtk.gdk.pixbuf_new_from_file(SHARE_DIR + "images/wrongflag.png")
+    clicked_mine = gtk.gdk.pixbuf_new_from_file(SHARE_DIR + "images/wrongmine.png")
     LEFT_CLICK = 1
     BOTH_CLICK = 2
     RIGHT_CLICK = 3
@@ -45,6 +47,9 @@ class Square(gtk.EventBox):
         else:
             self.flag()
     
+    def set_incorrect_flag(self):
+        self.image.set_from_pixbuf(Square.incorrect_flag)
+    
     def on_mouse_out(self, *args):
         if self.button_depressed:
             self.image.set_from_pixbuf(Square.button)
@@ -64,8 +69,11 @@ class Square(gtk.EventBox):
         self.disconnect_by_func(self.on_mouse_out)
         self.disconnect_by_func(self.on_mouse_released)
         if self.is_mine:
-            self.image.set_from_pixbuf(Square.mine_pixbuf)
-            self.grid.emit("end-game")
+            if self.grid.game_over:
+                self.image.set_from_pixbuf(Square.mine_pixbuf)    
+            else:
+                self.image.set_from_pixbuf(Square.clicked_mine)
+                self.grid.emit("end-game")
         else:
             self.image.set_from_pixbuf(Square.numbers_pixbuf[self.surrounding_mines])
             self.grid.uncover_squares(self.row, self.col)
