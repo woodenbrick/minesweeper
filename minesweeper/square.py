@@ -37,26 +37,33 @@ class Square(gtk.EventBox):
         self.button_depressed = False
         self.is_covered = True
         self.current_flag_state = 0 # 1 for flag 2 for question mark
+        self.multipress = False #used to show more than 1 mine (middle click)
     
     def on_mouse_in(self, widget, event):
         if event.button == Square.LEFT_CLICK or event.button == Square.BOTH_CLICK:
             if self.current_flag_state != 1:
                 self.button_depressed = True
                 self.image.set_from_pixbuf(Square.numbers_pixbuf[0])
-                #XXX if its BOTH_CLICK we should show the mines that will be uncovered
+                if event.button == Square.BOTH_CLICK:
+                    #XXX if its BOTH_CLICK we should show the mines that will be uncovered
+                    for square in self.grid.return_surrounding_squares(self.row, self.col):
+                        if square.is_covered and square.current_flag_state == 0:
+                            square.image.set_from_pixbuf(Square.numbers_pixbuf[0])
         else:
             self.flag()
     
     def set_incorrect_flag(self):
         self.image.set_from_pixbuf(Square.incorrect_flag)
     
-    def on_mouse_out(self, *args):
+    def on_mouse_out(self, square, event):
+        print 'mouse out args', event.button
         if self.button_depressed:
             self.image.set_from_pixbuf(Square.button)
             self.button_depressed = False
     
     def on_mouse_released(self, widget, event):
         """Count surrounding mines and uncover or end game if mine"""
+        print "mouse release args", event.button
         if self.button_depressed:
             self.uncover()
             if not self.grid.game_started:

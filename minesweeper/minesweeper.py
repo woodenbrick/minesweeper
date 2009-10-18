@@ -72,19 +72,15 @@ class MineSweeperGame(object):
         victory = True if self.mine_counter.get_text() == "0" else False
         for row in self.grid.minelist:
             for square in row:
-                if square.is_covered:
+                if square.is_covered and square.is_mine:
                     square.uncover()
-                    if square.current_flag_state == 1 and not square.is_mine:
-                        square.set_incorrect_flag()
-                        victory = False
+                elif square.current_flag_state == 1:
+                    square.set_incorrect_flag()
+                    victory = False
         if victory:
             print 'You win'
         else:
             print 'You lose'
-
-                
-        #show all squares
-        #stop timer
         #change to dead face
         #show incorrect mine guesses
         print "game over"
