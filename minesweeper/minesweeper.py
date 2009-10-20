@@ -53,22 +53,21 @@ class MineSweeperGame(object):
         self.vbox.pack_start(self.table)
         self.mine_counter.set_text(str(self.grid.mines))
         self.timer_label.set_text("0")
-		
+
     def start_game(self, *args):
         try:
-            gobject.source_remove(self.time)
+            gobject.source_remove(self.timer)
         except:
             pass
         self.start_time = time.time()
         self.timer = gobject.timeout_add(1000, self.increment_time)
-		
-    
+
+
     def end_game(self, *args):
         #if this is called and and square that has a mine is not flagged, it is a loss
         self.grid.disconnect_by_func(self.end_game)
         self.grid.game_over = True
         gobject.source_remove(self.timer)
-		
         victory = True if self.mine_counter.get_text() == "0" else False
         for row in self.grid.minelist:
             for square in row:
@@ -90,7 +89,8 @@ class MineSweeperGame(object):
         mines_flagged = int(self.mine_counter.get_text()) + value
         self.mine_counter.set_text(str(mines_flagged))
         
-    def increment_time(self):
+    def increment_time(self, end=False):
+        #XXX needs to end after game
         self.timer_label.set_text(str(int(time.time() - self.start_time)))
         return True
     
