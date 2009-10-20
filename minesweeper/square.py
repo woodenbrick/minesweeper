@@ -43,12 +43,14 @@ class Square(gtk.EventBox):
         if event.button == Square.LEFT_CLICK or event.button == Square.BOTH_CLICK:
             if self.current_flag_state != 1:
                 self.button_depressed = True
-                self.image.set_from_pixbuf(Square.numbers_pixbuf[0])
+                if self.is_covered:
+                    self.image.set_from_pixbuf(Square.numbers_pixbuf[0])
                 if event.button == Square.BOTH_CLICK:
                     #XXX if its BOTH_CLICK we should show the mines that will be uncovered
                     for square in self.grid.return_surrounding_squares(self.row, self.col):
                         if square.is_covered and square.current_flag_state == 0:
                             square.image.set_from_pixbuf(Square.numbers_pixbuf[0])
+                            square.multipress = True
         else:
             self.flag()
     
@@ -56,25 +58,37 @@ class Square(gtk.EventBox):
         self.image.set_from_pixbuf(Square.incorrect_flag)
     
     def on_mouse_out(self, square, event):
-        print 'mouse out args', event.button
-        if self.button_depressed:
+        #print square, event
+        try:
+            print event.button
+        except AttributeError:
+            pass
+        #print 'mouse out args', event.button
+        if self.button_depressed and self.is_covered:
             self.image.set_from_pixbuf(Square.button)
             self.button_depressed = False
+            for square in self.grid.return_surrounding_squares(self.row, self.col):
+                if square.multipress:
+                    square.image.set_from_pixbuf(Square.button)
+                    square.multipress = False
     
     def on_mouse_released(self, widget, event):
         """Count surrounding mines and uncover or end game if mine"""
-        print "mouse release args", event.button
         if self.button_depressed:
             self.uncover()
+            for square in self.grid.return_surrounding_squares(self.row, self.col):
+                if square.multipress:
+                    square.uncover()
+                    square.multipress = False            
             if not self.grid.game_started:
                 self.grid.emit("start-game")
                 self.grid.game_started = True
             
     def uncover(self):
         self.is_covered = False
-        self.disconnect_by_func(self.on_mouse_in)
-        self.disconnect_by_func(self.on_mouse_out)
-        self.disconnect_by_func(self.on_mouse_released)
+        #self.disconnect_by_func(self.on_mouse_in)
+        #self.disconnect_by_func(self.on_mouse_out)
+        #self.disconnect_by_func(self.on_mouse_released)
         if self.is_mine:
             if self.grid.game_over:
                 self.image.set_from_pixbuf(Square.mine_pixbuf)    
