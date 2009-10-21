@@ -2,19 +2,24 @@ import gtk
 import random
 import time
 import gobject
+import os
 
 class Square(gtk.EventBox):
-    SHARE_DIR = ""
-    button = gtk.gdk.pixbuf_new_from_file(SHARE_DIR + "images/button.png")
-    mine_pixbuf = gtk.gdk.pixbuf_new_from_file(SHARE_DIR + "images/mine.png")
+    dir = os.path.split(os.path.dirname(os.path.realpath(__file__)))[0]
+    if os.path.exists(os.path.join(dir, "images")):
+        SHARE_DIR = os.path.join(dir, "images") + os.sep
+    else:
+        SHARE_DIR = "/usr/share/minesweeper/images/"
+    button = gtk.gdk.pixbuf_new_from_file(SHARE_DIR + "button.png")
+    mine_pixbuf = gtk.gdk.pixbuf_new_from_file(SHARE_DIR + "mine.png")
     numbers_pixbuf = []
     for i in range(0, 9):
-        numbers_pixbuf.append(gtk.gdk.pixbuf_new_from_file(SHARE_DIR + "images/%d.png" % i))
-    flag = gtk.gdk.pixbuf_new_from_file(SHARE_DIR + "images/flag.png")
-    question = gtk.gdk.pixbuf_new_from_file(SHARE_DIR +"images/question.png")
+        numbers_pixbuf.append(gtk.gdk.pixbuf_new_from_file(SHARE_DIR + "%d.png" % i))
+    flag = gtk.gdk.pixbuf_new_from_file(SHARE_DIR + "flag.png")
+    question = gtk.gdk.pixbuf_new_from_file(SHARE_DIR +"question.png")
     flag_states = [button, flag, question]
-    incorrect_flag = gtk.gdk.pixbuf_new_from_file(SHARE_DIR + "images/wrongflag.png")
-    clicked_mine = gtk.gdk.pixbuf_new_from_file(SHARE_DIR + "images/wrongmine.png")
+    incorrect_flag = gtk.gdk.pixbuf_new_from_file(SHARE_DIR + "wrongflag.png")
+    clicked_mine = gtk.gdk.pixbuf_new_from_file(SHARE_DIR + "wrongmine.png")
     LEFT_CLICK = 1
     BOTH_CLICK = 2
     RIGHT_CLICK = 3

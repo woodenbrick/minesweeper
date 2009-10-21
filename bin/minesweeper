@@ -3,13 +3,11 @@ import sys
 import os
 try:
     from minesweeper.minesweeper import MineSweeperGame
-    share_dir = "/usr/share/minesweeper/"
 except ImportError:
     #not installed
     share_dir = os.path.split(os.path.dirname(os.path.realpath(__file__)))[0]
+    print share_dir
     sys.path.insert(0, share_dir)
     from minesweeper.minesweeper import MineSweeperGame
-from minesweeper.square import Square
-Square.SHARE_DIR = share_dir
 MineSweeperGame(*sys.argv)
 
