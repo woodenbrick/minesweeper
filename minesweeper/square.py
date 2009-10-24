@@ -47,6 +47,7 @@ class Square(gtk.EventBox):
     def on_mouse_in(self, widget, event):
         if event.button == Square.LEFT_CLICK or event.button == Square.BOTH_CLICK:
             if self.current_flag_state != 1:
+                self.grid.emit("mouse-in")
                 self.button_depressed = True
                 if self.is_covered:
                     self.image.set_from_pixbuf(Square.numbers_pixbuf[0])
@@ -70,6 +71,7 @@ class Square(gtk.EventBox):
             pass
         #print 'mouse out args', event.button
         if self.button_depressed and self.is_covered:
+            self.grid.emit("reset-face")
             self.image.set_from_pixbuf(Square.button)
             self.button_depressed = False
             for square in self.grid.return_surrounding_squares(self.row, self.col):
@@ -88,9 +90,11 @@ class Square(gtk.EventBox):
             if not self.grid.game_started:
                 self.grid.emit("start-game")
                 self.grid.game_started = True
+            self.grid.check_for_victory()
             
     def uncover(self):
         self.is_covered = False
+        self.grid.uncovered_squares_counter -= 1
         #self.disconnect_by_func(self.on_mouse_in)
         #self.disconnect_by_func(self.on_mouse_out)
         #self.disconnect_by_func(self.on_mouse_released)
@@ -99,21 +103,29 @@ class Square(gtk.EventBox):
                 self.image.set_from_pixbuf(Square.mine_pixbuf)    
             else:
                 self.image.set_from_pixbuf(Square.clicked_mine)
-                self.grid.emit("end-game")
+                self.grid.emit("end-game", False)
         else:
+            self.grid.emit("reset-face")
             self.image.set_from_pixbuf(Square.numbers_pixbuf[self.surrounding_mines])
             self.grid.uncover_squares(self.row, self.col)
             self.grid.uncover_numbers()
             
             
+            
     def flag(self):
         """Alternates between flagging, questionmark and a blank cover for square"""
         if self.current_flag_state == 0:
+            if self.is_mine:
+                self.grid.mines_left -= 1
             self.current_flag_state = 1
             self.grid.emit("add-flag", -1)
+            self.grid.check_for_victory()
         elif self.current_flag_state == 1:
+            if self.is_mine:
+                self.grid.mines_left += 1
             self.current_flag_state = 2
             self.grid.emit("remove-flag", 1)
+
         else:
             self.current_flag_state = 0
         self.image.set_from_pixbuf(Square.flag_states[self.current_flag_state])
