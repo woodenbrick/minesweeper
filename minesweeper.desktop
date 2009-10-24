@@ -1,0 +1,10 @@
+
+[Desktop Entry]
+Type=Application
+Name=Minesweeper
+Comment=Clone of the popular game
+Exec=/usr/bin/minesweeper
+Terminal=false
+Categories=Game;
+StartupNotify=false
+Icon=/usr/share/minesweeper/images/mine.png
