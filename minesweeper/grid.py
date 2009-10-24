@@ -10,7 +10,9 @@ class Grid(gobject.GObject):
         "start-game": (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, ()),
         "remove-flag" : (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, (int,)),
         "add-flag" : (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, (int,)),
-        "end-game" : (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, ()),    
+        "end-game" : (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, (bool,)),
+        "mouse-in" : (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, ()),
+        "reset-face" : (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, ()),
     }
 
     def __init__(self, rows=10, cols=10, mines=30):
@@ -21,8 +23,9 @@ class Grid(gobject.GObject):
         self.mines = mines
         self.game_started = False
         self.game_over = False
+        self.mines_left = mines
+        self.uncovered_squares_counter = self.cols * self.rows
         
-    
     def create_minefield(self):
         temp_mines = [True] * self.mines + [False] * (self.rows*self.cols-self.mines)
         random.shuffle(temp_mines)
@@ -111,3 +114,23 @@ class Grid(gobject.GObject):
                     for item in surrounding:
                         if item.is_covered and not item.is_mine:
                             item.uncover()
+    
+    def check_for_victory(self):
+        """Checks if all squares that are uncovered are mines, and if so gives a victory"""
+        print 'checking for victory...'
+        #XXX we should be checking the uncovered counter and if there is nothing left
+        #to uncover except mines then its a win
+        #if self.mines != self.uncovered_squares_counter:
+        #    print "%s != %s" % (self.mines, self.uncovered_squares_counter)
+        #    return False
+        
+        for row in self.minelist:
+            for square in row:
+                if square.is_covered and not square.is_mine:
+                    return False
+                #if square.current_flag_state == 1 and not square.is_mine:
+                #    return False
+                #if square.is_mine and square.current_flag_state != 1:
+                #    return False
+        self.emit("end-game", True)
+        return True
