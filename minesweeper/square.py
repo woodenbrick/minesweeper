@@ -57,7 +57,7 @@ class Square(gtk.EventBox):
                         if square.is_covered and square.current_flag_state == 0:
                             square.image.set_from_pixbuf(Square.numbers_pixbuf[0])
                             square.multipress = True
-        else:
+        elif self.is_covered:
             self.flag()
     
     def set_incorrect_flag(self):
@@ -95,9 +95,6 @@ class Square(gtk.EventBox):
     def uncover(self):
         self.is_covered = False
         self.grid.uncovered_squares_counter -= 1
-        #self.disconnect_by_func(self.on_mouse_in)
-        #self.disconnect_by_func(self.on_mouse_out)
-        #self.disconnect_by_func(self.on_mouse_released)
         if self.is_mine:
             if self.grid.game_over:
                 self.image.set_from_pixbuf(Square.mine_pixbuf)    
