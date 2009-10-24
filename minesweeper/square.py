@@ -51,7 +51,7 @@ class Square(gtk.EventBox):
                 self.button_depressed = True
                 if self.is_covered:
                     self.image.set_from_pixbuf(Square.numbers_pixbuf[0])
-                if event.button == Square.BOTH_CLICK:
+                if event.button == Square.BOTH_CLICK or not self.is_covered:
                     #XXX if its BOTH_CLICK we should show the mines that will be uncovered
                     for square in self.grid.return_surrounding_squares(self.row, self.col):
                         if square.is_covered and square.current_flag_state == 0:
@@ -64,20 +64,16 @@ class Square(gtk.EventBox):
         self.image.set_from_pixbuf(Square.incorrect_flag)
     
     def on_mouse_out(self, square, event):
-        #print square, event
-        try:
-            print event.button
-        except AttributeError:
-            pass
-        #print 'mouse out args', event.button
-        if self.button_depressed and self.is_covered:
-            self.grid.emit("reset-face")
-            self.image.set_from_pixbuf(Square.button)
+        if self.button_depressed:
             self.button_depressed = False
+            self.grid.emit("reset-face")
+            if self.is_covered:
+                self.image.set_from_pixbuf(Square.button)
             for square in self.grid.return_surrounding_squares(self.row, self.col):
                 if square.multipress:
                     square.image.set_from_pixbuf(Square.button)
                     square.multipress = False
+
     
     def on_mouse_released(self, widget, event):
         """Count surrounding mines and uncover or end game if mine"""
